@@ -37,7 +37,8 @@ def run_exp():
         --max_epochs=20 \
         --check_val_every_n_epoch=2 \
         --amp_level=O0 \
-        --precision=32 \
+        --precision=32  \
+        --dataset=NumPrediction_B_T5 \
         --gradient_clip_val=1.0'
 
     os.system(the_command)

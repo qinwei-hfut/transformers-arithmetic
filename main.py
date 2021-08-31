@@ -426,34 +426,34 @@ if __name__ == '__main__':
     random.seed(args.seed)
     pl.seed_everything(args.seed)
 
-    # if args.dataset == 'MyDataset':
-    dataset_train = MyDataset(n_examples=args.train_size, min_digits=args.min_digits_train,
-                              max_digits=args.max_digits_train,
-                              operation=args.operation, orthography=args.orthography,
-                              base_number=args.base_number, invert_question=args.invert_question,
-                              invert_answer=args.invert_answer, balance=args.balance_train)
+    if args.dataset == 'MyDataset':
+        dataset_train = MyDataset(n_examples=args.train_size, min_digits=args.min_digits_train,
+                                  max_digits=args.max_digits_train,
+                                  operation=args.operation, orthography=args.orthography,
+                                  base_number=args.base_number, invert_question=args.invert_question,
+                                  invert_answer=args.invert_answer, balance=args.balance_train)
 
-    dataset_val = MyDataset(n_examples=args.val_size, min_digits=args.min_digits_train,
-                            max_digits=args.max_digits_train,
-                            operation=args.operation, orthography=args.orthography,
-                            base_number=args.base_number, invert_question=args.invert_question,
-                            invert_answer=args.invert_answer, balance=args.balance_val)
+        dataset_val = MyDataset(n_examples=args.val_size, min_digits=args.min_digits_train,
+                                max_digits=args.max_digits_train,
+                                operation=args.operation, orthography=args.orthography,
+                                base_number=args.base_number, invert_question=args.invert_question,
+                                invert_answer=args.invert_answer, balance=args.balance_val)
 
-    dataset_test = MyDataset(n_examples=args.test_size,
-                             min_digits=args.min_digits_test,
-                             max_digits=args.max_digits_test,
-                             operation=args.operation, orthography=args.orthography,
-                             base_number=args.base_number, invert_question=args.invert_question,
-                             invert_answer=args.invert_answer, balance=args.balance_test)
-    # elif args.dataset == 'NumPrediction_B_T5':
-    train_path = '/home/qinwei/project/data/num_Prediction/train_examples.dat'
-    test_path = '/home/qinwei/project/data/num_Prediction/test_examples.dat'
-    val_path = '/home/qinwei/project/data/num_Prediction/test_examples.dat'
-    _dataset_train = NumPrediction_B_T5(path=train_path,train=True,num_style='convert_to_10ebased', question_num=3)
-    _dataset_test = NumPrediction_B_T5(path=test_path, train=True, num_style='convert_to_10ebased', question_num=3)
-    _dataset_val = NumPrediction_B_T5(path=val_path, train=True, num_style='convert_to_10ebased', question_num=3)
+        dataset_test = MyDataset(n_examples=args.test_size,
+                                 min_digits=args.min_digits_test,
+                                 max_digits=args.max_digits_test,
+                                 operation=args.operation, orthography=args.orthography,
+                                 base_number=args.base_number, invert_question=args.invert_question,
+                                 invert_answer=args.invert_answer, balance=args.balance_test)
+    elif args.dataset == 'NumPrediction_B_T5':
+        train_path = '/home/qinwei/project/data/num_Prediction/train_examples.dat'
+        test_path = '/home/qinwei/project/data/num_Prediction/test_examples.dat'
+        val_path = '/home/qinwei/project/data/num_Prediction/test_examples.dat'
+        dataset_train = NumPrediction_B_T5(path=train_path,train=True,num_style='convert_to_10ebased', question_num=3)
+        dataset_test = NumPrediction_B_T5(path=test_path, train=True, num_style='convert_to_10ebased', question_num=3)
+        dataset_val = NumPrediction_B_T5(path=val_path, train=True, num_style='convert_to_10ebased', question_num=3)
 
-    pdb.set_trace()
+    # pdb.set_trace()
 
     train_dataloader = DataLoader(dataset_train, batch_size=args.train_batch_size,
                                   shuffle=True, num_workers=args.num_workers)
