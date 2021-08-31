@@ -56,7 +56,7 @@ class NumPrediction_B_T5(Dataset):
 
         example = self.examples[item]
 
-        return example['sentence'], example['answer']
+        return ' '.join(example['sentence']), example['answer']
 
         # if self.question_num == 3:
         #     return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], example['num_pos'][2]
