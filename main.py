@@ -14,6 +14,7 @@ from transformers import AutoModelForSeq2SeqLM
 from transformers import AutoTokenizer
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
+from MyDatasets import *
 
 from typing import List
 
@@ -121,6 +122,9 @@ class T5Finetuner(pl.LightningModule):
             list(answers), padding=True, truncation=False, return_tensors='pt')['input_ids']
 
         pdb.set_trace()
+
+
+
 
         assert input_dict['input_ids'].shape[1] < self.hparams.max_seq_length
         assert labels.shape[1] < self.hparams.max_seq_length
@@ -409,6 +413,8 @@ if __name__ == '__main__':
                         help='a factor increases t_i after a restart (CosineAnnealingWarmRestarts)')
     parser.add_argument("--num_workers", default=4, type=int, help="Number of CPU workers for loading data.")
 
+    parser.add_argument("--dataset", type=str, help='the name of the dataset')
+
     parser = pl.Trainer.add_argparse_args(parser)
 
     args = parser.parse_args()
@@ -420,6 +426,7 @@ if __name__ == '__main__':
     random.seed(args.seed)
     pl.seed_everything(args.seed)
 
+    # if args.dataset == 'MyDataset':
     dataset_train = MyDataset(n_examples=args.train_size, min_digits=args.min_digits_train,
                               max_digits=args.max_digits_train,
                               operation=args.operation, orthography=args.orthography,
@@ -438,6 +445,15 @@ if __name__ == '__main__':
                              operation=args.operation, orthography=args.orthography,
                              base_number=args.base_number, invert_question=args.invert_question,
                              invert_answer=args.invert_answer, balance=args.balance_test)
+    # elif args.dataset == 'NumPrediction_B_T5':
+    train_path = '/home/qinwei/project/data/num_Prediction/train_examples.dat'
+    test_path = '/home/qinwei/project/data/num_Prediction/test_examples.dat'
+    val_path = '/home/qinwei/project/data/num_Prediction/test_examples.dat'
+    _dataset_train = NumPrediction_B_T5(path=train_path,train=True,num_style='convert_to_10ebased', question_num=3)
+    _dataset_test = NumPrediction_B_T5(path=test_path, train=True, num_style='convert_to_10ebased', question_num=3)
+    _dataset_val = NumPrediction_B_T5(path=val_path, train=True, num_style='convert_to_10ebased', question_num=3)
+
+    pdb.set_trace()
 
     train_dataloader = DataLoader(dataset_train, batch_size=args.train_batch_size,
                                   shuffle=True, num_workers=args.num_workers)
