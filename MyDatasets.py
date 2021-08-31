@@ -25,21 +25,28 @@ class NumPrediction_B_T5(Dataset):
     def process_paragraphes(self):
         examples = []
         for sentence in self.paragraphes:
-            # example = []
-            num_pos = []
-            ori_num = []
-            converted_num = []
+            question_pos: int
+            num_counter = 0
+            answer: str
             for idx, word in enumerate(sentence):
-                # if self.is_number(word):
+
                 if Utils.is_number(word):
-                    sentence[idx] = '[NUM]'
-                    num_pos.append(idx)
-                    ori_num.append(word)
+                    num_counter += 1
+
+                    # num_pos.append(idx)
+                    # ori_num.append(word)
                     if self.num_style != None:
                         word = getattr(Utils, self.num_style)(number=word, invert_number=False, split_type=None)
-                    converted_num.append(word)
+                    sentence[idx] = str(word)
 
-            examples.append({'sentence': sentence, 'ori_num': ori_num, 'converted_num': converted_num, 'num_pos': num_pos})
+                    if num_counter == 3:
+                        answer = sentence[idx]
+                        sentence[idx] = '[NUM]'
+                        question_pos = idx
+                    # converted_num.append(word)
+
+
+            examples.append({'sentence': sentence, 'question_pos':question_pos, 'answer':answer})
         return examples
 
     def __len__(self):
@@ -49,11 +56,13 @@ class NumPrediction_B_T5(Dataset):
 
         example = self.examples[item]
 
-        if self.question_num == 3:
-            return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], example['num_pos'][2]
-        else:
-            return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], \
-                   example['num_pos'][2]
+        return example['sentence'], example['answer']
+
+        # if self.question_num == 3:
+        #     return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], example['num_pos'][2]
+        # else:
+        #     return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], \
+        #            example['num_pos'][2]
 
 
 
@@ -321,8 +330,7 @@ class Utils:
             else:
                 i = i - (len_number - point_idx)
             if split_type is None:
-                # output.append('10e' + str(i))
-                output.append('e' + str(i))
+                output.append('10e' + str(i))
             elif split_type == 'underscore':
                 output.append('10e' + '_'.join(str(i)))
             elif split_type == 'character':
@@ -330,7 +338,7 @@ class Utils:
             else:
                 raise Exception(f'Wrong split_type: {split_type}')
             output.append(digit)
-            output.append('_')
+            # output.append('_')
 
         # if signal:
         #     output.append(signal)
@@ -340,7 +348,7 @@ class Utils:
             output = output[::-1]
         output = output[1:]
 
-        return ' '.join(output).replace(' ', '')
+        return ' '.join(output)
 
     @staticmethod
     def is_number(s):
