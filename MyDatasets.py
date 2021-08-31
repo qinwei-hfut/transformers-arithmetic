@@ -346,7 +346,7 @@ class Utils:
         # The output is already inverted. If we want it to _not_ be inverted, then we invert it.
         if not invert_number:
             output = output[::-1]
-        output = output[1:]
+        # output = output[1:]
 
         return ' '.join(output)
 
