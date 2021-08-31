@@ -2,6 +2,8 @@ import argparse
 import glob
 import json
 import os
+import pdb
+
 import pytorch_lightning as pl
 import random
 import torch
@@ -14,6 +16,8 @@ from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 
 from typing import List
+
+
 
 
 def compute_exact_match(predicted_answer, correct_answer) -> bool:
@@ -115,6 +119,8 @@ class T5Finetuner(pl.LightningModule):
 
         labels = self.tokenizer.batch_encode_plus(
             list(answers), padding=True, truncation=False, return_tensors='pt')['input_ids']
+
+        pdb.set_trace()
 
         assert input_dict['input_ids'].shape[1] < self.hparams.max_seq_length
         assert labels.shape[1] < self.hparams.max_seq_length
