@@ -41,7 +41,8 @@ class NumPrediction_B_T5(Dataset):
 
                     if num_counter == 3:
                         answer = sentence[idx]
-                        sentence[idx] = '[NUM]'
+                        # sentence[idx] = '[NUM]'
+                        sentence[idx] = 'what'
                         question_pos = idx
                     # converted_num.append(word)
 
