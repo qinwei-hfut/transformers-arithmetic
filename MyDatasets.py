@@ -6,12 +6,12 @@ import torch
 
 
 class NumPrediction_B_T5(Dataset):
-    def __init__(self, path:str, train:bool, num_style:str, question_num:int):
+    def __init__(self, path: str, train: bool, num_style: str, question_num: int):
         # path: path of the loaded data
         # train: bool FLAG, it is training data or test data
         # num_style: What convert the num to; 10-base char or str or word
         # question_num: which num is the question?
-        assert question_num in [123,13,3]
+        assert question_num in [123, 13, 3]
         assert num_style in [None, 'convert_to_10ebased']
 
         self.paragraphes = torch.load(path)
@@ -46,8 +46,7 @@ class NumPrediction_B_T5(Dataset):
                         question_pos = idx
                     # converted_num.append(word)
 
-
-            examples.append({'sentence': sentence, 'question_pos':question_pos, 'answer':answer})
+            examples.append({'sentence': sentence, 'question_pos': question_pos, 'answer': answer})
         return examples
 
     def __len__(self):
@@ -57,16 +56,13 @@ class NumPrediction_B_T5(Dataset):
 
         example = self.examples[item]
 
-        return ' '.join(example['sentence']), example['answer']
+        return ''.join(example['sentence']), example['answer']
 
         # if self.question_num == 3:
         #     return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], example['num_pos'][2]
         # else:
         #     return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], \
         #            example['num_pos'][2]
-
-
-
 
     def is_number(self, s):
         try:
@@ -85,14 +81,13 @@ class NumPrediction_B_T5(Dataset):
         return False
 
 
-
 class NumPrediction_B(Dataset):
-    def __init__(self, path:str, train:bool, num_style:str, question_num:int):
+    def __init__(self, path: str, train: bool, num_style: str, question_num: int):
         # path: path of the loaded data
         # train: bool FLAG, it is training data or test data
         # num_style: What convert the num to; 10-base char or str or word
         # question_num: which num is the question?
-        assert question_num in [123,13,3]
+        assert question_num in [123, 13, 3]
         assert num_style in [None, 'convert_to_10ebased']
 
         self.paragraphes = torch.load(path)
@@ -120,7 +115,8 @@ class NumPrediction_B(Dataset):
                         word = getattr(Utils, self.num_style)(number=word, invert_number=False, split_type=None)
                     converted_num.append(word)
 
-            examples.append({'sentence': sentence, 'ori_num': ori_num, 'converted_num': converted_num, 'num_pos': num_pos})
+            examples.append(
+                {'sentence': sentence, 'ori_num': ori_num, 'converted_num': converted_num, 'num_pos': num_pos})
         return examples
 
     def __len__(self):
@@ -131,13 +127,11 @@ class NumPrediction_B(Dataset):
         example = self.examples[item]
 
         if self.question_num == 3:
-            return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], example['num_pos'][2]
+            return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], \
+                   example['num_pos'][2]
         else:
             return example['sentence'], example['converted_num'][0:2], example['num_pos'][0:2], example['ori_num'][2], \
                    example['num_pos'][2]
-
-
-
 
     def is_number(self, s):
         try:
@@ -157,12 +151,12 @@ class NumPrediction_B(Dataset):
 
 
 class Toy_Static_Num_Dataset(Dataset):
-    def __init__(self, digit_top_bound=9, example_num=400000,balance=False):
+    def __init__(self, digit_top_bound=9, example_num=400000, balance=False):
         print('init: Toy_Static_Num_Dataset')
-        print('balance: '+str(balance))
+        print('balance: ' + str(balance))
 
         self.digit_top_bound = digit_top_bound
-        self.top_bound = float('1e'+str(digit_top_bound))
+        self.top_bound = float('1e' + str(digit_top_bound))
 
         self.example_num = example_num
         if balance == True:
@@ -179,7 +173,7 @@ class Toy_Static_Num_Dataset(Dataset):
         return (self.nums_digitlist[item], self.nums_float[item])
 
     def random_generator(self):
-        while(True):
+        while (True):
             random_num = torch.rand(1)
             if random_num >= 0.1:
                 return random_num
@@ -191,24 +185,24 @@ class Toy_Static_Num_Dataset(Dataset):
         nums_float = []
 
         # 所以这里生成数据的范围是 0.00x -> 0.99 * 10^b
-        for d in range(self.digit_top_bound+1):
+        for d in range(self.digit_top_bound + 1):
             if d == 0:
-                for i in range(int(self.example_num / (self.digit_top_bound+1))):
+                for i in range(int(self.example_num / (self.digit_top_bound + 1))):
                     num_float = round(torch.rand(1).item(), 2)
                     nums_float.append(num_float)
                     nums_str.append(str(num_float))
             else:
-                for i in range(int(self.example_num / (self.digit_top_bound+1))):
-                    num_float = round(self.random_generator().item()*float('1e'+str(d)), 2)
+                for i in range(int(self.example_num / (self.digit_top_bound + 1))):
+                    num_float = round(self.random_generator().item() * float('1e' + str(d)), 2)
                     nums_float.append(num_float)
                     nums_str.append(str(num_float))
-        return nums_str,nums_float
+        return nums_str, nums_float
 
     def generate_num(self):
         nums_str = []
         nums_float = []
         for c in range(self.example_num):
-            num_float = round(torch.rand(1).item() * self.top_bound,2)
+            num_float = round(torch.rand(1).item() * self.top_bound, 2)
             nums_float.append(num_float)
             nums_str.append(str(num_float))
         return nums_str, nums_float
@@ -222,15 +216,16 @@ class Toy_Static_Num_Dataset(Dataset):
                 if digit == '.':
                     num_digit_list.append(torch.tensor(10))
                     # digit_1hot[10] = 1
-                elif digit in ['0','1','2','3','4','5','6','7','8','9']:
+                elif digit in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                     num_digit_list.append(torch.tensor(int(digit)))
                     # digit_1hot[int(digit)] = 1
                 # num_1hot.append(digit_1hot)
-            numbers_digit_list.append(torch.stack(num_digit_list,dim=0))   # shape [seq, embedding]
+            numbers_digit_list.append(torch.stack(num_digit_list, dim=0))  # shape [seq, embedding]
         return numbers_digit_list
 
+
 class Static_Num_Pre_Dataset(Dataset):
-    def __init__(self, path:str, train:bool, num_style:str, out_style:str):
+    def __init__(self, path: str, train: bool, num_style: str, out_style: str):
         # path: path of the loaded data
         # train: bool FLAG, it is training data or test data
         # num_style: What convert the num to; 10-base char or str or word
@@ -258,12 +253,11 @@ class Static_Num_Pre_Dataset(Dataset):
                 digit_1hot = torch.zeros(11)
                 if digit == '.':
                     digit_1hot[10] = 1
-                elif digit in ['0','1','2','3','4','5','6','7','8','9']:
+                elif digit in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                     digit_1hot[int(digit)] = 1
                 num_1hot.append(digit_1hot)
-            numbers_1hot.append(torch.stack(num_1hot,dim=0))   # shape [seq, embedding]
+            numbers_1hot.append(torch.stack(num_1hot, dim=0))  # shape [seq, embedding]
         return numbers_1hot
-
 
     def num2digit_list(self):
         numbers_digit_list = []
@@ -274,13 +268,12 @@ class Static_Num_Pre_Dataset(Dataset):
                 if digit == '.':
                     num_digit_list.append(torch.tensor(10))
                     # digit_1hot[10] = 1
-                elif digit in ['0','1','2','3','4','5','6','7','8','9']:
+                elif digit in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                     num_digit_list.append(torch.tensor(int(digit)))
                     # digit_1hot[int(digit)] = 1
                 # num_1hot.append(digit_1hot)
-            numbers_digit_list.append(torch.stack(num_digit_list,dim=0))   # shape [seq, embedding]
+            numbers_digit_list.append(torch.stack(num_digit_list, dim=0))  # shape [seq, embedding]
         return numbers_digit_list
-
 
     def collect_numbers(self):
         numbers = []
@@ -308,7 +301,6 @@ class Static_Num_Pre_Dataset(Dataset):
             return (self.ori_nums_digitlist[item], self.ori_numbers_float[item])
 
 
-
 class Utils:
     def __init__(self):
         pass
@@ -324,10 +316,10 @@ class Utils:
         len_number = len(number)
         point_idx = number.index('.')
         for i, digit in enumerate(number[::-1]):
-            if i+1 == len_number-point_idx:
+            if i + 1 == len_number - point_idx:
                 continue
-            elif i+1 < len_number-point_idx:
-                i = (i+1) - (len_number-point_idx)
+            elif i + 1 < len_number - point_idx:
+                i = (i + 1) - (len_number - point_idx)
             else:
                 i = i - (len_number - point_idx)
             if split_type is None:
@@ -367,9 +359,22 @@ class Utils:
             pass
         return False
 
+    @staticmethod
+    def listToString(s):
+
+        # initialize an empty string
+        str1 = ""
+
+        # traverse in the string
+        for ele in s:
+            str1 += ele
+
+            # return string
+        return str1
+
 
 project_path = '/home/qinwei/project/num_prediction/'
-data_path = project_path+'train_examples.dat'
+data_path = project_path + 'train_examples.dat'
 
 '''
 num_pre = NumPrediction_B(path=data_path, train=True, num_style='convert_to_10ebased',question_num=3)

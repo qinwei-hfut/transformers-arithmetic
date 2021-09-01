@@ -38,9 +38,11 @@ def run_exp():
         --check_val_every_n_epoch=2 \
         --amp_level=O0 \
         --precision=32  \
-        --dataset=NumPrediction_B_T5 \
+        --dataset=MyDataset \
         --gradient_clip_val=1.0'
 
+    # NumPrediction_B_T5
+    # MyDataset
     os.system(the_command)
 
 

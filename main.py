@@ -118,10 +118,11 @@ class T5Finetuner(pl.LightningModule):
         input_dict = self.tokenizer.batch_encode_plus(
             list(questions), padding=True, truncation=False, return_tensors='pt')
 
+        # TODO 在这边发现 labels的第一位，总是 [3]，很奇怪
         labels = self.tokenizer.batch_encode_plus(
             list(answers), padding=True, truncation=False, return_tensors='pt')['input_ids']
 
-        pdb.set_trace()
+        # pdb.set_trace()
 
 
 
